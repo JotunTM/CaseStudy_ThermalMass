@@ -59,33 +59,32 @@ class Lctrl(Node):
             Tth = TthVector[ii]			
 		
             if  self.TsetP > self.TS_bl: # Request for a Tsupply higher than the BL (75 Cdeg)
-                if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
-                   Tth = max(Tth -1,18.) 
-                   self.demandFlag = 1 #--> Tth
-                else:
-                   self.demandFlag = -2 #--> HOBS # !! Un paio di volte arriva qui perché la Tindoor scende a 17.9
+                #if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
+                 #  Tth = max(Tth -1,18.) 
+                  # self.demandFlag = 1 #--> Tth
+                #else:
+                self.demandFlag = -2 #--> HOBS # !! Un paio di volte arriva qui perché la Tindoor scende a 17.9
 				
             if  self.mdotTOT > self.mdot_bl:  # Request for a Mdot higher than the BL
-                if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
-                   Tth = max(Tth -1,18.) 
-                   self.demandFlag_mdot = 1 #--> Tth # !! si ferma qui ma non si sa se sia sufficiente e sovrascrive il -2 di prima
-                elif self.TEScog_socIN or self.TESlshp_socIN > -1:
+                #if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
+                 #  Tth = max(Tth -1,18.) 
+                  # self.demandFlag_mdot = 1 #--> Tth # !! si ferma qui ma non si sa se sia sufficiente e sovrascrive il -2 di prima
+                if self.TEScog_socIN or self.TESlshp_socIN > -1:
                    self.demandFlag_mdot = -1 #--> TES discharge
                 else:
                    self.demandFlag_mdot = -2 #--> HOBS
 			   
             else:
-                Tth = min(Tth + 1, 22.) # Since there is surplus, fill in the capacity in the buildings
+                #Tth = min(Tth + 1, 22.) # Since there is surplus, fill in the capacity in the buildings
                 if self.TEScog_socIN or self.TESlshp_socIN < 1:
                    self.demandFlag_mdot = -3 #--> TES charge
                 else:
-                   print("Heat is being wasted")
-            
-            #d["self.Tth{0}".format(ii)]=Tth	
-            if ii == 0:
-               self.Tth_0 = Tth 
-            elif ii == 1:
-               self.Tth_1 = Tth
+                   print("Heat is being wasted")            
+            	
+            #if ii == 0:
+             #  self.Tth_0 = Tth 
+            #elif ii == 1:
+             #  self.Tth_1 = Tth
 			   
             ii = ii+1				
 				

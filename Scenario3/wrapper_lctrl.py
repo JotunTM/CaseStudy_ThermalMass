@@ -28,7 +28,8 @@ class Lctrl(Node):
         self.mdot_bl = 507.
         self.TindoorMIN = 19.
         self.TindoorMAX = 22.
-        self.TsetMatrix = np.loadtxt("TS_set.txt", comments='#', delimiter='\t', converters=None, skiprows=2, usecols=(0,1), unpack=False, ndmin=0)   
+        self.TsetMatrix = np.loadtxt("TS_set.txt", comments='#', delimiter='\t', converters=None, skiprows=2, usecols=(0,1), unpack=False, ndmin=0) 
+        self.zz = 0		
 
     def set_attribute(self, attr, value):
         """This method is called to set an attribute of the model to a given value, you need to adapt it to your model."""
@@ -52,42 +53,56 @@ class Lctrl(Node):
         d={}
 		
         ii=0
-		
+	
         for Tindoor in TindoorVector:
 		
             self.demandFlag = 0            
-            Tth = TthVector[ii]			
+            Tth = TthVector[ii]					
 		
             if  self.TsetP > self.TS_bl: # Request for a Tsupply higher than the BL (75 Cdeg)
-                #if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
-                 #  Tth = max(Tth -1,18.) 
-                  # self.demandFlag = 1 #--> Tth
-                #else:
-                self.demandFlag = -2 #--> HOBS # !! Un paio di volte arriva qui perché la Tindoor scende a 17.9
+                if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
+
+                   Tth = max(Tth -1,18.) 
+                   self.demandFlag = 1 #--> Tth
+				
+                else:
+                   self.demandFlag = -2 #--> HOBS # !! Un paio di volte arriva qui perché la Tindoor scende a 17.9
 				
             if  self.mdotTOT > self.mdot_bl:  # Request for a Mdot higher than the BL
-                #if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
-                 #  Tth = max(Tth -1,18.) 
-                  # self.demandFlag_mdot = 1 #--> Tth # !! si ferma qui ma non si sa se sia sufficiente e sovrascrive il -2 di prima
-                if self.TEScog_socIN or self.TESlshp_socIN > -1:
+                if Tindoor >= self.TindoorMIN and Tth >= self.TindoorMIN: # First check the possibility to use the capacity in the buildings
+
+                   Tth = max(Tth -1,18.) 
+                   self.demandFlag = 1 #--> Tth
+
+                elif self.TEScog_socIN or self.TESlshp_socIN > -1:
                    self.demandFlag_mdot = -1 #--> TES discharge
                 else:
                    self.demandFlag_mdot = -2 #--> HOBS
 			   
             else:
-                #Tth = min(Tth + 1, 22.) # Since there is surplus, fill in the capacity in the buildings
+                Tth = min(Tth + 1, 22.) # Since there is surplus, fill in the capacity in the buildings
                 if self.TEScog_socIN or self.TESlshp_socIN < 1:
                    self.demandFlag_mdot = -3 #--> TES charge
                 else:
-                   print("Heat is being wasted")            
-            	
-            #if ii == 0:
-             #  self.Tth_0 = Tth 
-            #elif ii == 1:
-             #  self.Tth_1 = Tth
+                   print("Heat is being wasted")
+            
+            if (self.zz>=6 and self.zz<=8) or (self.zz>=18 and self.zz<=20):
+                Tth = 20.
+                if self.demandFlag == 1:
+                    self.demandFlag =-2
+					   
+            if ii == 0:
+               self.Tth_0 = Tth 
+            elif ii == 1:
+               self.Tth_1 = Tth
 			   
             ii = ii+1				
-				
+		
+        if 	self.zz == 23:	
+            self.zz = 0
+        else:
+            self.zz = self.zz + 1
+        		
 		
 if __name__ == "__main__":
     node = Lctrl()

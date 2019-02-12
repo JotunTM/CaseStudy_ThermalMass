@@ -1,5 +1,0 @@
-Capex		[sek/MWp] OBS!! Cog: 1 [sek/MWe] = 1*(1+alfa)/alfa/eta [sek/MWp] 
-OpexFixed	[sek/MWp] OBS!! Cog: 1 [sek/MWe] = 1*(1+alfa)/alfa/eta [sek/MWp] 
-OpexVariable	[sek/MWhh]
-Fuel
-Revenues        [sek/MWh]
